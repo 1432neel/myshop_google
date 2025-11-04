@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Wishlist - MyShop</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Toastify -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col">
+<!-- ✅ Unified Navbar -->
+<nav class="sticky top-0 z-10 w-full bg-white shadow-md">
+  <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between px-4 sm:px-6 py-3">
+    <!-- Left -->
+    <div class="flex items-center gap-4 sm:gap-6">
+      <a href="index.html" class="text-2xl font-bold text-blue-600">MyShop</a>
+      <a href="index.html" class="text-gray-700 hover:text-blue-600 transition text-sm sm:text-base">Home</a>
+    </div>
+
+    <!-- Right -->
+    <div class="flex items-center gap-4 mt-3 sm:mt-0">
+      <a href="wishlist.html" class="flex items-center gap-1 text-gray-700 hover:text-pink-600 transition text-sm sm:text-base">
+        <span class="text-lg sm:text-xl">❤️</span>
+        <span id="wishCount">0</span>
+      </a>
+
+      <a href="cart.html" class="flex items-center gap-1 text-gray-700 hover:text-blue-600 transition text-sm sm:text-base">
+        <span class="text-lg sm:text-xl">🛒</span>
+        <span id="cartCount">0</span>
+      </a>
+
+      <!-- Login/Profile -->
+      <div id="userSection" class="min-w-[160px] sm:min-w-[180px] text-sm sm:text-base"></div>
+    </div>
+  </div>
+</nav>
+
+
+
+ <main class="flex-grow container mx-auto px-4 py-12">
+  <h2 class="text-3xl font-extrabold text-gray-800 mb-8 flex items-center justify-center gap-2">
+    ❤️ <span>Your Wishlist</span>
+  </h2>
+
+  <div id="wishContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+  <div id="wishActions" class="mt-10 hidden text-center">
+    <button onclick="clearWishlist()" class="border border-red-500 text-red-600 px-6 py-2 rounded hover:bg-red-50 transition">
+      Clear Wishlist
+    </button>
+  </div>
+</main>
+
+
+  <footer class="bg-white text-center py-4 border-t text-gray-500">
+    © <span id="year"></span> MyShop. All rights reserved.
+  </footer>
+
+  
+
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script src="js/toast.js"></script>
+<script src="js/shared.js"></script>
+<script src="js/auth.js"></script>
+
+ 
+<script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  function showToast(msg, color = "#2563eb") {
+    Toastify({
+      text: msg,
+      duration: 2000,
+      gravity: "top",
+      position: "right",
+      backgroundColor: color
+    }).showToast();
+  }
+
+  function renderWishlist() {
+    const wish = loadData('wishlist');
+    const container = document.getElementById('wishContainer');
+    const actions = document.getElementById('wishActions');
+
+    if (!wish.length) {
+  // Center message with small height (5vh)
+  container.className = "flex flex-col items-center justify-center text-center text-gray-600 h-[5vh] space-y-1";
+
+  container.innerHTML = `
+    <p class="text-lg font-medium text-gray-700">Your wishlist is empty.</p>
+    <a href="index.html" class="text-blue-600 hover:underline text-sm font-medium">Continue Shopping</a>
+  `;
+
+  actions.classList.add("hidden");
+  return;
+} else {
+  // Restore grid layout when wishlist has items
+  container.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6";
+}
+
+
+    container.innerHTML = wish.map(i => `
+      <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition p-4 flex flex-col">
+        <img src="${i.img}" alt="${i.name}" class="w-full h-56 object-contain bg-white rounded-md mb-3 p-2">
+
+        <h3 class="font-semibold text-gray-800 mb-1">${i.name}</h3>
+        <p class="text-gray-600 mb-4">₹${i.price}</p>
+        <div class="flex justify-between mt-auto">
+          <button onclick="removeItem(${i.id})" class="text-red-600 hover:underline text-sm">Remove</button>
+          <button onclick='moveToCart(${JSON.stringify(i).replace(/'/g, "&apos;")})' class="text-blue-600 hover:underline text-sm">Add to Cart</button>
+        </div>
+      </div>
+    `).join('');
+
+    actions.classList.remove("hidden");
+  }
+
+  function removeItem(id) {
+  let wish = loadData('wishlist').filter(i => i.id !== id);
+  saveData('wishlist', wish);
+  showToast("Removed from wishlist", "#dc2626");
+  renderWishlist();
+  updateCounts(); // <-- Add here
+}
+
+
+ function clearWishlist() {
+  localStorage.removeItem("wishlist");
+  showToast("Wishlist cleared", "#dc2626");
+  renderWishlist();
+  updateCounts(); // <-- Add here
+}
+
+
+function moveToCart(item) {
+  const cart = loadData('cart');
+  const existing = cart.find(p => p.id === item.id);
+
+  if (existing) {
+    existing.qty++;
+    showToast("Quantity updated in cart");
+  } else {
+    cart.push({ ...item, qty: 1 });
+    showToast("Moved to cart");
+  }
+
+  saveData('cart', cart);
+
+  // Optional: remove from wishlist after moving
+  let wish = loadData('wishlist').filter(i => i.id !== item.id);
+  saveData('wishlist', wish);
+  renderWishlist();
+  updateCounts(); // <-- Add here
+}
+
+
+
+
+  renderWishlist();
+</script>
+
+<script>
+  // Initialize header counts when page loads
+  document.addEventListener("DOMContentLoaded", updateCounts);
+</script>
+
+</body>
+</html>
