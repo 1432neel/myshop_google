@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyShop Google</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Identity Service -->
+  <script
+    src="https://accounts.google.com/gsi/client"
+    async
+    defer
+    onload="onGoogleScriptLoad()">
+  </script>
+
+  <!-- Toastify (for toasts) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background: #f9fafb;
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col">
+  <!-- ✅ Responsive Navbar -->
+  <nav class="sticky top-0 z-10 w-full bg-white shadow-md">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between px-4 sm:px-6 py-3">
+      <!-- Left -->
+      <div class="flex items-center gap-4 sm:gap-6">
+        <a href="index.html" class="text-2xl font-bold text-blue-600">MyShop</a>
+        <a href="index.html" class="text-gray-700 hover:text-blue-600 transition text-sm sm:text-base">Home</a>
+      </div>
+
+      <!-- Right -->
+      <div class="flex items-center gap-4 mt-3 sm:mt-0">
+        <a href="wishlist.html" class="flex items-center gap-1 text-gray-700 hover:text-pink-600 transition text-sm sm:text-base">
+          <span class="text-lg sm:text-xl">❤️</span>
+          <span id="wishCount">0</span>
+        </a>
+
+        <a href="cart.html" class="flex items-center gap-1 text-gray-700 hover:text-blue-600 transition text-sm sm:text-base">
+          <span class="text-lg sm:text-xl">🛒</span>
+          <span id="cartCount">0</span>
+        </a>
+
+        <!-- Login/Profile -->
+        <div id="userSection" class="min-w-[160px] sm:min-w-[180px] text-sm sm:text-base"></div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ✅ Hero Banner -->
+  <header class="bg-gradient-to-r from-blue-50 to-blue-100 py-8 sm:py-10 text-center px-4">
+    <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-2">Welcome to MyShop</h1>
+    <p class="text-gray-600 text-sm sm:text-base">Quality products, quick shopping, seamless experience.</p>
+  </header>
+
+  <!-- ✅ Product List -->
+  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-6 sm:py-10">
+    <div class="flex items-center justify-between mb-6 flex-wrap gap-2">
+      <h2 class="text-xl sm:text-2xl font-semibold text-gray-800">Our Products</h2>
+    </div>
+
+    <!-- Responsive product grid -->
+    <div id="productContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+  </main>
+
+  <!-- ✅ Footer -->
+  <footer class="bg-white text-center py-4 text-gray-500 border-t text-sm">
+    © <span id="year"></span> MyShop. All rights reserved.
+  </footer>
+
+  <!-- ✅ Scripts -->
+  <script>
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+<script
+  src="https://accounts.google.com/gsi/client"
+  async
+  defer
+  onload="onGoogleScriptLoad()">
+</script>
+<script src="js/auth.js"></script>
+  <script src="js/toast.js"></script>
+  <script src="js/shared.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
