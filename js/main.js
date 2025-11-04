@@ -10,13 +10,21 @@ const products = [
 ];
 
 function addToCart(product) {
-  const cart = loadData("cart");
+  let cart = loadData("cart");
   const existing = cart.find(p => p.id === product.id);
-  existing ? existing.qty++ : cart.push({ ...product, qty: 1 });
+
+  if (existing) {
+    existing.qty += 1; // ✅ Increase quantity if already exists
+    showToast(`🛒 Quantity updated for ${product.name}`);
+  } else {
+    cart.push({ ...product, qty: 1 }); // ✅ Add new product
+    showToast(`🛒 Added ${product.name} to cart`);
+  }
+
   saveData("cart", cart);
   updateCounts();
-  showToast("🛒 Added to cart");
 }
+
 
 function addToWishlist(product) {
   const wish = loadData("wishlist");
